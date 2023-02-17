@@ -39,6 +39,9 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { useDispatch } from "react-redux";
 
+
+
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.white,
@@ -215,11 +218,20 @@ export default function HospitalTable() {
   const [filesAccount, setFilesAccount] = useState();
   //new changes
   const [open, setOpen] = React.useState(false);
+  const [HandleViewButton, setHandleViewButton] = useState(false);
 
-  const handleClickOpen = (row) => {
+  const handleClickOpen = (row, state) => {
     console.log("fffff", row.attachements);
     setSelectedRow(row);
     setImagesList(row.attachements);
+    if (state) {
+      setHandleViewButton(state);
+
+    }
+    else {
+      setHandleViewButton(false);
+
+    }
     setOpen(true);
   };
   const handleClose = () => {
@@ -270,7 +282,7 @@ export default function HospitalTable() {
             //   name: file.name,
             //   type: file.type,
             // });
-         
+
           } else {
             let img = URL.createObjectURL(file);
             images.push(file);
@@ -290,7 +302,7 @@ export default function HospitalTable() {
     setImagesList((imgs) => [...imgs, ...images]);
   };
   const handleRemoveFile = (id) => {
-    
+
     console.log("File name for emoval is : " + id);
     let files = imagesList.filter((file) => file.name !== id);
     setImagesList(files);
@@ -367,7 +379,7 @@ export default function HospitalTable() {
                   />
                   <label
                     htmlFor="icon-button-file_upload"
-                    onClick={() => handleClickOpen(row)}
+                    onClick={() => handleClickOpen(row, true)}
                   >
                     <Tooltip title="Please upload respective Passbook">
                       <IconButton color="primary" component="span">
@@ -376,7 +388,7 @@ export default function HospitalTable() {
                     </Tooltip>
                   </label>
                   <Tooltip title="To preview Passbook">
-                    <ButtonBase onClick={() => handleClickOpen(row)}>
+                    <ButtonBase onClick={() => handleClickOpen(row, false)}>
                       <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
                     </ButtonBase>
                   </Tooltip>
@@ -396,9 +408,9 @@ export default function HospitalTable() {
       <Dialog open={open} onClose={handleClose} maxWidth={"md"} fullWidth>
         <DialogTitle>Attachements</DialogTitle>
         <DialogContent>
-         
+        {HandleViewButton ?(
           <Button variant="contained" component="label">
-            Upload
+            Browse
             <input
               hidden
               accept="image/*,.pdf"
@@ -407,10 +419,11 @@ export default function HospitalTable() {
               onChange={handleImages}
             />
           </Button>
+        ):("")}
           <Box sx={{ display: "flex" }}>
             {imagesList &&
               imagesList.map((file) => {
-                
+
                 if (file.type == "application/pdf") {
                   return (
                     <div style={{ position: "relative" }}>
@@ -423,7 +436,7 @@ export default function HospitalTable() {
                           display: "flex",
                           fontSize: "10px",
                           textDecoration: "none",
-                          margin:"10px"
+                          margin: "10px"
                         }}
                       >
                         <Box
@@ -436,7 +449,7 @@ export default function HospitalTable() {
                             alignItems: "center",
                             justifyContent: "center",
                             border: "1px solid grey",
-                            margin:"10px"
+                            margin: "10px"
                           }}
                         >
                           <PictureAsPdfIcon />
@@ -497,7 +510,9 @@ export default function HospitalTable() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
+          {HandleViewButton ? (
           <Button onClick={handleAddAttachments}>Upload</Button>
+          ):("")}
         </DialogActions>
       </Dialog>
     </>
