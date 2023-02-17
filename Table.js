@@ -9,10 +9,14 @@ import Paper from "@mui/material/Paper";
 import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
 import { mandatoryaction } from "../../redux/actions/mandatyFieldAction";
-// import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import moment from "moment";
+
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import * as Yup from "yup";
+
 import { DialogContentText, TextField } from "@mui/material";
 // import dayjs from "dayjs";
-// import { LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 import {
   Alert,
   Box,
@@ -21,7 +25,7 @@ import {
   Input,
   Tooltip,
 } from "@mui/material";
-// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import VisibilitySharpIcon from "@mui/icons-material/VisibilitySharp";
 import InfoIcon from "@mui/icons-material/Info";
@@ -38,6 +42,8 @@ import Typography from "@mui/material/Typography";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { useDispatch } from "react-redux";
+import { Form, Formik } from "formik";
+import TextFields from "@mui/material/TextField";
 
 
 
@@ -55,6 +61,18 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 export default function HospitalTable() {
   // const [value, setValue] = useState(dayjs("2014-08-18T21:11:54"));
+
+  const INITIAL_INITIATE_FORM_STATE = {
+    dateOfAdmission: "",
+    dateOfDischarge: "",
+
+  };
+
+  const INITIATE_FORM_VALIDATION = Yup.object().shape({
+    dateOfAdmission: Yup.date().required("Required"),
+    dateOfDischarge: Yup.date().required("Required"),
+
+  });
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -322,199 +340,271 @@ export default function HospitalTable() {
   console.log("images are", imagesList);
   return (
     <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>S.No</StyledTableCell>
-              <StyledTableCell>Name of Document</StyledTableCell>
-              <StyledTableCell>Issuing Authority</StyledTableCell>
-              <StyledTableCell>Date of issue</StyledTableCell>
-              <StyledTableCell>Date of expiry</StyledTableCell>
-              <StyledTableCell>Attachments</StyledTableCell>
-              <StyledTableCell>Sample</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row, key) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell>{key + 1}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.issuing_authority}</TableCell>
-                <TableCell>{row.date_of_issue}</TableCell>
-                <TableCell>{row.date_of_expiry}</TableCell>
-                {/* <TableCell>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DesktopDatePicker
-                      label="Date of issue"
-                      inputFormat="MM/DD/YYYY"
-                      // value={value}
+      <Formik
+        initialValues={{
+          ...INITIAL_INITIATE_FORM_STATE,
+        }}
+        validationSchema={INITIATE_FORM_VALIDATION}
+        onSubmit={(values) => {
 
-                      maxDate={new Date()}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </TableCell> */}
-                {/* <TableCell>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DesktopDatePicker
-                      label="Date of expiry"
-                      inputFormat="MM/DD/YYYY"
-                      // value={value}
-                      maxDate={new Date()}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                </TableCell> */}
-                <TableCell>
-                  <input
-                    // accept="file/*"
-                    id="icon-button-file_upload"
-                    // type="file"
-                    style={{ display: "none" }}
-                    onChange={handleCapture_account}
-                  />
-                  <label
-                    htmlFor="icon-button-file_upload"
-                    onClick={() => handleClickOpen(row, true)}
+          let info = values;
+          let dfa = Date(info.dateOfAdmission);
+          console.log("Date of joining"+dfa);
+          info.dateOfAdmission = moment(dfa).format('YYYY-MM-DD');
+          let dfd = Date(info.dateOfDischarge);
+          console.log("Date of Expiring"+dfd);
+          info.dateOfDischarge = moment(dfd).format('YYYY-MM-DD');
+
+
+
+        }}
+        >
+        {({
+          errors,
+          touched,
+          values,
+          setFieldValue,
+          handleSubmit,
+          handleChange,
+        }) => (<Form>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }}>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>S.No</StyledTableCell>
+                  <StyledTableCell>Name of Document</StyledTableCell>
+                  <StyledTableCell>Issuing Authority</StyledTableCell>
+                  <StyledTableCell>Date of issue</StyledTableCell>
+                  <StyledTableCell>Date of expiry</StyledTableCell>
+                  <StyledTableCell>Attachments</StyledTableCell>
+                  <StyledTableCell>Sample</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, key) => (
+                  <TableRow
+                    key={row.name}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
-                    <Tooltip title="Please upload respective Passbook">
-                      <IconButton color="primary" component="span">
-                        <FileUploadSharpIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </label>
-                  <Tooltip title="To preview Passbook">
-                    <ButtonBase onClick={() => handleClickOpen(row, false)}>
-                      <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
-                    </ButtonBase>
-                  </Tooltip>
-                </TableCell>
-                <TableCell>
-                  <Tooltip title="To preview sample document">
-                    <ButtonBase onClick={onDownload_account}>
-                      <InfoIcon color="primary"></InfoIcon>
-                    </ButtonBase>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Dialog open={open} onClose={handleClose} maxWidth={"md"} fullWidth>
-        <DialogTitle>Attachements</DialogTitle>
-        <DialogContent>
-        {HandleViewButton ?(
-          <Button variant="contained" component="label">
-            Browse
-            <input
-              hidden
-              accept="image/*,.pdf"
-              multiple
-              type="file"
-              onChange={handleImages}
-            />
-          </Button>
-        ):("")}
-          <Box sx={{ display: "flex" }}>
-            {imagesList &&
-              imagesList.map((file) => {
+                    <TableCell>{key + 1}</TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.issuing_authority}</TableCell>
 
-                if (file.type == "application/pdf") {
-                  return (
-                    <div style={{ position: "relative" }}>
-                      <a
-                        href={file.name}
-                        download
-                        key={file.id}
-                        style={{
-                          color: "grey",
-                          display: "flex",
-                          fontSize: "10px",
-                          textDecoration: "none",
-                          margin: "10px"
-                        }}
+
+                    <TableCell>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DesktopDatePicker
+                          inputFormat="MM/DD/YYYY"
+                          value={values.dateOfAdmission}
+                          onChange={(value) =>
+                            setFieldValue("dateOfAdmission", value, true)
+                          }
+                          name="dateOfAdmission"
+                          maxDate={new Date()}
+                          label="Date of Issue"
+                          renderInput={(params) => (
+                            <TextFields
+                              error={Boolean(
+                                touched.dateOfAdmission &&
+                                errors.dateOfAdmission
+                              )}
+                              helperText={
+                                touched.dateOfAdmission &&
+                                errors.dateOfAdmission
+                              }
+                              variant="outlined"
+                              required
+                              {...params}
+                            />
+                          )}
+                        />
+                      </LocalizationProvider>
+                    </TableCell>
+
+                    <TableCell>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DesktopDatePicker
+                            inputFormat="MM/DD/YYYY"
+                            value={values.dateOfDischarge}
+                            onChange={(value) =>
+                              setFieldValue("dateOfDischarge", value, true)
+                            }
+                            name="dateOfDischarge"
+                            minDate={new Date()}
+                            label="Date of Expiry"
+                            renderInput={(params) => (
+                              <TextFields
+                                error={Boolean(
+                                  touched.dateOfDischarge &&
+                                  errors.dateOfDischarge
+                                )}
+                                helperText={
+                                  touched.dateOfDischarge &&
+                                  errors.dateOfDischarge
+                                }
+                                variant="outlined"
+                                required
+                                {...params}
+                              />
+                            )}
+                          />
+                        </LocalizationProvider>
+                      </LocalizationProvider>
+                    </TableCell>
+                    <TableCell>
+                      <input
+                        // accept="file/*"
+                        id="icon-button-file_upload"
+                        // type="file"
+                        style={{ display: "none" }}
+                        onChange={handleCapture_account}
+                      />
+                      <label
+                        htmlFor="icon-button-file_upload"
+                        onClick={() => handleClickOpen(row, true)}
                       >
-                        <Box
-                          sx={{
-                            width: 100,
-                            height: 100,
-                            padding: 2,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            border: "1px solid grey",
-                            margin: "10px"
-                          }}
-                        >
-                          <PictureAsPdfIcon />
-                          <Typography
-                            sx={{
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              display: "-webkit-box",
-                              WebkitLineClamp: "1",
-                              WebkitBoxOrient: "vertical",
+                        <Tooltip title="Please upload respective Passbook">
+                          <IconButton color="primary" component="span">
+                            <FileUploadSharpIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </label>
+                      <Tooltip title="To preview Passbook">
+                        <ButtonBase onClick={() => handleClickOpen(row, false)}>
+                          <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                        </ButtonBase>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Tooltip title="To preview sample document">
+                        <ButtonBase onClick={onDownload_account}>
+                          <InfoIcon color="primary"></InfoIcon>
+                        </ButtonBase>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Dialog open={open} onClose={handleClose} maxWidth={"md"} fullWidth>
+            <DialogTitle>Attachements</DialogTitle>
+            <DialogContent>
+              {HandleViewButton ? (
+                <Button variant="contained" component="label">
+                  Browse
+                  <input
+                    hidden
+                    accept="image/*,.pdf"
+                    multiple
+                    type="file"
+                    onChange={handleImages}
+                  />
+                </Button>
+              ) : ("")}
+              <Box sx={{ display: "flex" }}>
+                {imagesList &&
+                  imagesList.map((file) => {
+
+                    if (file.type == "application/pdf") {
+                      return (
+                        <div style={{ position: "relative" }}>
+                          <a
+                            href={file.name}
+                            download
+                            key={file.id}
+                            style={{
+                              color: "grey",
+                              display: "flex",
+                              fontSize: "10px",
+                              textDecoration: "none",
+                              margin: "10px"
                             }}
                           >
-                            {file.name}
-                          </Typography>
-                        </Box>
-                      </a>
-                      <HighlightOffIcon
-                        sx={{
-                          position: "absolute",
-                          right: "5px",
-                          top: "5px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleRemoveFile(file.name)}
-                      />
-                    </div>
-                  );
-                }
-              })}
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            {imagesList &&
-              imagesList.map((file) => {
-                if (file.type != "application/pdf") {
-                  return (
-                    <div style={{ display: "flex", position: "relative" }}>
-                      <img
-                        src={file.imgSrc}
-                        key={file.id}
-                        alt={file.name}
-                        width="100%"
-                        loading="lazy"
-                      />
-                      <HighlightOffIcon
-                        sx={{
-                          position: "absolute",
-                          right: "5px",
-                          top: "5px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handleRemoveFile(file.name)}
-                      />
-                    </div>
-                  );
-                }
-              })}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          {HandleViewButton ? (
-          <Button onClick={handleAddAttachments}>Upload</Button>
-          ):("")}
-        </DialogActions>
-      </Dialog>
+                            <Box
+                              sx={{
+                                width: 100,
+                                height: 100,
+                                padding: 2,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                border: "1px solid grey",
+                                margin: "10px"
+                              }}
+
+                            >
+                              <PictureAsPdfIcon />
+                              <Typography
+                                sx={{
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: "1",
+                                  WebkitBoxOrient: "vertical",
+                                }}
+                              >
+                                {file.name}
+                              </Typography>
+                            </Box>
+                          </a>
+                          <HighlightOffIcon
+                            sx={{
+                              position: "absolute",
+                              right: "5px",
+                              top: "5px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleRemoveFile(file.name)}
+                          />
+                        </div>
+                      );
+                    }
+                  })}
+              </Box>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                {imagesList &&
+                  imagesList.map((file) => {
+                    if (file.type != "application/pdf") {
+                      return (
+                        <div style={{ display: "flex", position: "relative" }}>
+                          <img
+                            src={file.imgSrc}
+                            key={file.id}
+                            alt={file.name}
+                            width="100%"
+                            loading="lazy"
+                          />
+                          <HighlightOffIcon
+                            sx={{
+                              position: "absolute",
+                              right: "5px",
+                              top: "5px",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleRemoveFile(file.name)}
+                          />
+                        </div>
+                      );
+                    }
+                  })}
+              </Box>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              {HandleViewButton ? (
+                <Button onClick={handleAddAttachments}>Upload</Button>
+              ) : ("")}
+            </DialogActions>
+          </Dialog>
+        </Form>
+        )}
+
+      </Formik>
+
+
     </>
   );
 }
