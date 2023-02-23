@@ -5,6 +5,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import VisibilitySharpIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { ButtonBase } from "@mui/material";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import {
   AppBar,
@@ -57,7 +58,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import NoDataFound from "../../components/NoDataFound/NoDataFound";
 import apicon from "../../assests/images/apGovNew_logo.png"
 import { Image } from "@mui/icons-material";
-import SyncIcon from '@mui/icons-material/Sync';
+
 
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
@@ -65,60 +66,59 @@ import { DialogContentText } from "@mui/material";
 import { Navigate } from "react-router-dom";
 import { red } from "@mui/material/colors";
 import CircularIndeterminate from "../../components/FormsUI/Loader/Loader";
+import { set } from "react-hook-form";
 
 // function createData(name, calories) {
 //   return { name, calories };
 // }
-
+const rowid = [];
 export default function InitiateAISOfficer({ props, inboxred }) {
   const [rows, setRows] = useState([
     {
       id: 1,
-      name: "Diagnosis reports",
+      name: "Diagnosis reports *",
       attachements: [],
     },
     {
       id: 2,
-      name: "Case sheet",
+      name: "Case sheet *",
       attachements: [],
     },
     {
       id: 3,
-      name: "Discharge Summary",
+      name: "Discharge Summary *",
       attachements: [],
     },
     {
       id: 4,
-      name: "Detailed bill",
+      name: "Detailed bill *",
       attachements: [],
     },
     {
       id: 5,
-      name: "Consolidated Bill",
+      name: "Consolidated Bill *",
       attachements: [],
     },
     {
       id: 6,
-      name: "Self-declaration of non-drawl",
+      name: "Self-declaration of non-drawl *",
       attachements: [],
     },
     {
       id: 7,
-      name: "Dependent declaration -  Non mandatory attachment",
+      name: "Dependent declaration",
       attachements: [],
     },
 
   ]);
 
-  const speciality = [];
+
 
   const dispatch = useDispatch();
   React.useEffect(() => {
     const payload = {
       trustId: props,
-    };
-
-    dispatch(initiateAISAction(payload));
+    }; dispatch(initiateAISAction(payload));
   }, [dispatch]);
 
 
@@ -129,19 +129,25 @@ export default function InitiateAISOfficer({ props, inboxred }) {
   const navigate = useNavigate();
 
 
-
+  var locAmt;
   const initiateAISData = useSelector((state) => state.initiateAISReducer);
-  const data = useSelector((state) => state.specialityInfoReducer);   // fetching dropdown data from speciality reducer
+  if (Object.keys(initiateAISData.data).length != 0) {
+    //console.log(initiateAISData.data.result.locAmount);
+    locAmt = initiateAISData.data.result.locAmount;
+  }
 
-  console.log(data);
+
+
+
+  const data = useSelector((state) => state.specialityInfoReducer);   // fetching dropdown data from speciality reducer
+  const speciality = [];
+
 
   if (Object.keys(data.data).length != 0) {
     //  console.log(data.data.result.specialities);
     data.data.result[`specialities`].forEach(element => speciality.push(element.disMainName));
 
   }
-  //console.log(speciality);
-
   const { showMessage } = useSelector((state) => state.showMessageReducer);
 
   const Speciality = speciality;
@@ -159,7 +165,9 @@ export default function InitiateAISOfficer({ props, inboxred }) {
 
   };
   const INITIATE_FORM_VALIDATION = Yup.object().shape({
-    amounts: Yup.string().required("Required"),
+
+    amounts: Yup.number().required("Required").max(locAmt)
+    ,
     patientType: Yup.string().required("Required"),
     speciality: Yup.string().required("Required"),
     dateOfAdmission: Yup.date().required("Required"),
@@ -169,6 +177,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
     dateOfDischarge: Yup.date().required("Required"),
     remarks: Yup.string().required("Required"),
 
+
   });
 
 
@@ -177,11 +186,12 @@ export default function InitiateAISOfficer({ props, inboxred }) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [open, setOpen] = React.useState(false);
   const [FilesAccount, setFilesAccount] = useState();
-  const [viewFilesAccount, setViewFilesAccount] = useState();
   const [HandleViewButton, setHandleViewButton] = useState(false);
+  const [morethanFive, setmorethanFive] = useState(false);
+  const [isAttached, setisAttached] = useState(false);
 
 
-
+  var count = 0;
   const [specialityID, setspecialityID] = useState();
   const [specialityName, setspecialityName] = useState();
   const oncheckSpeciality = (archId, archName) => {
@@ -204,60 +214,129 @@ export default function InitiateAISOfficer({ props, inboxred }) {
   };
 
   const successCB = () => {
-    console.log("Inside successCb");
-    inboxred && inboxred();
-    console.log("After successCb");
+    inboxred && inboxred(props);
+
   };
 
 
   const handlepostInitialFrom = (info) => {
-    console.log("Login Info : ", info);
-    if (info) {
-      //console.log("Inside handlepostInitialFrom");
 
+    if (info && rowid.includes(1, 2, 3, 4, 5, 6)) {
       dispatch(saveDataTrustIdAction(info, successCB));
+    }
+    else {
+      alert("Please Attach All mandatory files")
     }
   };
 
-  let payload = {};
+  let payload = [];
   var trustId = localStorage.getItem(trustId);
   var fileArr = [];
   const documentformdata = new FormData();
 
+  const checkMandatory = (selectRow) => {
+    {
 
+      console.log("checkMandatory" + rowid);
+      if (selectedRow.id === 1) {
+        rowid.push(1);
+        //console.log("In first condtion inside if  " + firstdoc)
+      }
+
+      if (selectedRow.id === 2) {
+
+        rowid.push(2);
+        // console.log("In first condtion inside if  " + seconddoc)
+      }
+      if (selectedRow.id === 3) {
+
+        rowid.push(3);
+        //  console.log("In first condtion inside if  " + thirddoc)
+      }
+      if (selectedRow.id === 4) {
+
+        rowid.push(4);
+        //  console.log("In first condtion inside if  " + fourthdoc)
+      }
+      if (selectedRow.id === 5) {
+
+        rowid.push(5);
+        // console.log("In first condtion inside if  " + firstdoc)
+      }
+      if (selectedRow.id === 6) {
+
+        rowid.push(6);
+        //console.log("In first condtion inside if  " + firstdoc)
+      }
+
+    }
+
+
+  }
+
+  let payl = [];
   const handleAddAttachments = () => {
+    let count = 0;
     rows.map((row) => {
-      // console.log("Handle attachments");
+
       if (row.id === selectedRow.id) {
+        checkMandatory(selectedRow.id);
+        console.log("Selected id is " + selectedRow.id);
         row.attachements = imagesList;
         fileArr.push(imagesList);
-        payload = [{
-          "docId": selectedRow.id,
-          "trustId": props,
-        },
+        if (selectedRow.id === 4 || selectedRow.id === 5 || selectedRow.id === 3) {
+          if (imagesList.length > 5) {
+            setmorethanFive(true);
+            alert("Maximum 5 documemts allowed");
 
-        ];
+          }
+          else {
+            for (let i = 1; i <= imagesList.length; i++) {
+              payload.push({
+                "docId": selectedRow.id,
+                "trustId": props
+              })
+
+            }
+          }
+        }
+        else {
+          payload = [{
+            "docId": selectedRow.id,
+            "trustId": props,
+          },
+
+          ];
+        }
+
         documentformdata.append(
           "payloadDTOList",
           new Blob([JSON.stringify(payload)], { type: "application/json" })
         );
+
         imagesList.forEach((file) => {
+
           documentformdata.append("files", file);
         });
 
-        //  console.log("Payload is + ", payload);
-        //  console.log("Files are + ", imagesList);
         dispatch(upploadAISdocs(documentformdata));
+        setisAttached(true);
       }
     });
+
     setRows(rows);
+
     setOpen(false);
+
+
+
   }
 
 
 
   const handleImages = (e) => {
-    //  console.log(e);
+
+    // console.log(e);
     let images = [];
     if (e.target.files.length > 0) {
       console.log("Under Handle images" + e.target.files.length);
@@ -270,42 +349,33 @@ export default function InitiateAISOfficer({ props, inboxred }) {
           } else {
             let img = URL.createObjectURL(file);
             images.push(file);
-            console.log("images", images);
-
-
+            //  console.log("images", images);
           }
         })
       );
     }
 
     setImagesList((imgs) => [...imgs, ...images]);
-
-    //console.log( imagesList);
   };
 
   const handleCapture = ({ target }) => {
     console.log("handle capture");
     console.log("Selected Account reference : ", target);
     setFilesAccount(target.files[0]);
-    setFilesAccount("111");
 
-    // setViewFilesAccount(URL.createObjectURL(target.files[0]));
     if (imagesList != null) {
       setHandleViewButton(true);
-      console.log("Files Account is not null");
+
 
     }
     else {
       setHandleViewButton(false);
-
-
     }
 
   }
-
+  //For opening attachments window
   const handleOpen = (row, state) => {
-    // console.log("This is handle open")
-    // console.log(row);
+
     setSelectedRow(row);
     setImagesList(row.attachements);
     if (state) {
@@ -621,8 +691,9 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                 info.dateOfDischarge = moment(dfd).format('YYYY-MM-DD');
                 let dfs = Date(info.dateOfSurgery);
                 info.dateOfSurgery = moment(dfs).format('YYYY-MM-DD');
-                console.log(values.birthday);
-                console.log("Values", info);
+                console.log(info.amounts);
+                //console.log("Values", info);
+
                 InitialInfo = {
                   "amountClaimed": info.amounts,
                   "patientType": info.patientType,
@@ -634,8 +705,9 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                   "remarks": info.remarks,
                   "trustId": props,
                 };
-                // console.log(InitialInfo);
-                handlepostInitialFrom(InitialInfo);
+                console.log(InitialInfo);
+                if (set)
+                  handlepostInitialFrom(InitialInfo);
               }}
             >
               {({
@@ -732,14 +804,17 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                         <Grid mt={1}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
-                              inputFormat="MM/DD/YYYY"
+                              inputFormat="DD/MM/YYYY"
                               value={values.dateOfAdmission}
                               onChange={(value) =>
                                 setFieldValue("dateOfAdmission", value, true)
                               }
                               name="dateOfAdmission"
                               maxDate={new Date()}
-                              label="Date of Issue"
+                              label="Date of Admission"
+                              onKeyDown={(e) => {
+                                e.preventDefault();
+                              }}
                               renderInput={(params) => (
                                 <TextFields
                                   error={Boolean(
@@ -800,13 +875,16 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                         <Grid mt={1}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
-                              inputFormat="MM/DD/YYYY"
+                              inputFormat="DD/MM/YYYY"
                               value={values.dateOfSurgery}
                               onChange={(value) =>
                                 setFieldValue("dateOfSurgery", value, true)
+
+
                               }
+                              minDate={new Date()}
                               name="dateOfSurgery"
-                              maxDate={new Date()}
+
                               label="Date of Surgery/Treatment(IP*)"
                               renderInput={(params) => (
                                 <TextFields
@@ -839,7 +917,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                         <Grid mt={1}>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DesktopDatePicker
-                              inputFormat="MM/DD/YYYY"
+                              inputFormat="DD/MM/YYYY"
                               value={values.dateOfDischarge}
                               onChange={(value) =>
                                 setFieldValue("dateOfDischarge", value, true)
@@ -895,6 +973,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                                 <TableCell>{row.id}</TableCell>
                                 <TableCell>{row.name}</TableCell>
 
+
                                 <TableCell>
 
                                   <input
@@ -909,18 +988,18 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                                     onClick={() => handleOpen(row, true)}
                                   >
 
-                                    <Tooltip title="Please upload respective Passbook">
+                                    <Tooltip title="Upload ">
                                       <IconButton color="primary" component="span">
                                         <FileUploadSharpIcon />
                                       </IconButton>
                                     </Tooltip>
                                   </label>
 
-                                  <Tooltip title="To preview Passbook">
-                                    {(imagesList != null) ? (
+                                  <Tooltip title="Preview Documents">
+                                    {(isAttached != null) ? (
 
                                       <ButtonBase onClick={() => handleOpen(row, false)}>
-                                        <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                        <VisibilityIcon color="primary"></VisibilityIcon>
                                       </ButtonBase>
                                     ) : (
                                       <ButtonBase disabled>
@@ -928,9 +1007,6 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                                       </ButtonBase>
                                     )
                                     }
-
-
-
 
                                   </Tooltip>
 
@@ -976,9 +1052,11 @@ export default function InitiateAISOfficer({ props, inboxred }) {
           </Grid>
 
         ) : (
-          <CircularIndeterminate alignContent="center"/>
-          
+          <CircularIndeterminate alignContent="center" />
+
         )}
+
+
 
         <Dialog open={open} onClose={handleClose} maxWidth={"md"} fullWidth >
           <DialogTitle>Attachments</DialogTitle>
@@ -991,6 +1069,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                   accept="image/*,.pdf"
                   multiple
                   type="file"
+                  required
                   onChange={handleImages}
                   margin="10px"
                 />
@@ -1064,62 +1143,72 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                 imagesList.map((file) => {
 
                   if (file.type != "application/pdf") {
+                    const link = document.createElement("a");
+                    link.href = file;
                     console.log("Images inserted");
                     console.log(file);
                     return (
-                      <div style={{ display: "flex", position: "relative", margin: "10" }}>
+                      <div style={{ display: "flex", position: "relative", margin: "A10" }}>
+                        <a href={file.name}
+                          download
+                          key={file.id}
+                          style={{
+                            color: "Blue",
+                            display: "flex",
+                            fontSize: "10px",
+                            textDecoration: "none",
+                            margin: "10px",
+                          }}
+                        >
+                          <Box sx={{ display: "flex" }}>
+                            <ImageIcon />
+                            <Typography
+                              sx={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                display: "-webkit-box",
+                                WebkitLineClamp: "1",
+                                WebkitBoxOrient: "vertical",
+                                margin: "5",
+
+                              }}
+                            >
+                              {file.name}
+                            </Typography>
 
 
+                          </Box>
 
-                        <Box sx={{ display: "flex" }}>
+                        </a>
+                        <HighlightOffIcon
+                          sx={{
+                            position: "relative",
+                            right: "5px",
+                            top: "5px",
+                            cursor: "pointer",
+                            left: "10px"
 
+                          }}
+                          onClick={() => handleRemoveFile(file.name)}
+                        />
 
-                          <Typography
-                            sx={{
-
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              display: "-webkit-box",
-                              WebkitLineClamp: "1",
-                              WebkitBoxOrient: "vertical",
-                              margin: "10px"
-                            }}
-                          >
-                            {file.name}
-                          </Typography>
-
-                          <HighlightOffIcon
-                            sx={{
-                              position: "relative",
-                              right: "5px",
-                              top: "5px",
-                              cursor: "pointer",
-                              left: "10px"
-
-                            }}
-                            onClick={() => handleRemoveFile(file.name)}
-                          />
-                        </Box>
                       </div>
                     );
                   }
                 })}
             </Box>
+
+            <DialogContentText sx={{ color: 'red' }}>Atleast 1 file required *</DialogContentText>
+            {morethanFive ? (<DialogContentText sx={{ color: 'red' }}>More than 5 files are not allowed *</DialogContentText>) : ""}
           </DialogContent>
-
           <DialogActions>
-
             <Button onClick={handleClose}>Cancel</Button>
             {HandleViewButton ?
               <Button onClick={handleAddAttachments}>Upload</Button>
               :
               ""}
-
           </DialogActions>
-
-
         </Dialog>
-
       </div>
 
     </>
