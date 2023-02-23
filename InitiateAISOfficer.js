@@ -71,8 +71,16 @@ import { set } from "react-hook-form";
 // function createData(name, calories) {
 //   return { name, calories };
 // }
+
+
+
 const rowid = [];
+//const set1 = new Set(rowid);
+const set1  = new Set();
+//const finalarr = new [...Set(rowid)]
+const rowid1 = [1, 2, 3, 4, 5, 6];
 export default function InitiateAISOfficer({ props, inboxred }) {
+  // set1 = new Set(rowid);
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -189,6 +197,8 @@ export default function InitiateAISOfficer({ props, inboxred }) {
   const [HandleViewButton, setHandleViewButton] = useState(false);
   const [morethanFive, setmorethanFive] = useState(false);
   const [isAttached, setisAttached] = useState(false);
+  const [attachedfile, setattachedfile] = useState(false);
+
 
 
   var count = 0;
@@ -220,8 +230,9 @@ export default function InitiateAISOfficer({ props, inboxred }) {
 
 
   const handlepostInitialFrom = (info) => {
-
-    if (info && rowid.includes(1, 2, 3, 4, 5, 6)) {
+    const test1 = rowid1.some(el => rowid.includes(el));
+    if (info && test1 && attachedfile) {
+      console.log("Inside it");
       dispatch(saveDataTrustIdAction(info, successCB));
     }
     else {
@@ -237,37 +248,54 @@ export default function InitiateAISOfficer({ props, inboxred }) {
   const checkMandatory = (selectRow) => {
     {
 
-      console.log("checkMandatory" + rowid);
+      //console.log("checkMandatory" + rowid);
       if (selectedRow.id === 1) {
+        // rowset.add(1);
         rowid.push(1);
+        set1.add(1);
         //console.log("In first condtion inside if  " + firstdoc)
       }
 
       if (selectedRow.id === 2) {
-
+        //rowset.add(2);
         rowid.push(2);
+        set1.add(2);
         // console.log("In first condtion inside if  " + seconddoc)
       }
       if (selectedRow.id === 3) {
-
         rowid.push(3);
+        set1.add(3);
+
         //  console.log("In first condtion inside if  " + thirddoc)
       }
       if (selectedRow.id === 4) {
-
         rowid.push(4);
+        set1.add(4);
+
         //  console.log("In first condtion inside if  " + fourthdoc)
       }
       if (selectedRow.id === 5) {
-
         rowid.push(5);
+        set1.add(5);
+
         // console.log("In first condtion inside if  " + firstdoc)
       }
       if (selectedRow.id === 6) {
-
         rowid.push(6);
+        set1.add(6);
         //console.log("In first condtion inside if  " + firstdoc)
       }
+      const test1 = rowid1.some(el => rowid.includes(el));
+      if(set1.size === 6 && test1 ){
+        console.log("set length" + set1.size)
+        setattachedfile(true)
+
+      }
+      else{
+        console.log("set length" + set1.size)
+
+      }
+
 
     }
 
@@ -276,7 +304,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
 
   let payl = [];
   const handleAddAttachments = () => {
-    let count = 0;
+   
     rows.map((row) => {
 
       if (row.id === selectedRow.id) {
@@ -317,7 +345,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
           imagesList.forEach((file) => {
 
             documentformdata.append("files", file);
-          });        
+          });
           dispatch(upploadAISdocs(documentformdata));
         }
 
@@ -1201,7 +1229,7 @@ export default function InitiateAISOfficer({ props, inboxred }) {
             </Box>
 
             <DialogContentText sx={{ color: 'red' }}>1 file required *</DialogContentText>
-            
+
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
