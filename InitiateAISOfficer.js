@@ -313,13 +313,15 @@ export default function InitiateAISOfficer({ props, inboxred }) {
           "payloadDTOList",
           new Blob([JSON.stringify(payload)], { type: "application/json" })
         );
+        if (imagesList.length <= 5) {
+          imagesList.forEach((file) => {
 
-        imagesList.forEach((file) => {
+            documentformdata.append("files", file);
+          });        
+          dispatch(upploadAISdocs(documentformdata));
+        }
 
-          documentformdata.append("files", file);
-        });
-
-        dispatch(upploadAISdocs(documentformdata));
+        
         setisAttached(true);
       }
     });
@@ -1198,8 +1200,8 @@ export default function InitiateAISOfficer({ props, inboxred }) {
                 })}
             </Box>
 
-            <DialogContentText sx={{ color: 'red' }}>Atleast 1 file required *</DialogContentText>
-            {morethanFive ? (<DialogContentText sx={{ color: 'red' }}>More than 5 files are not allowed *</DialogContentText>) : ""}
+            <DialogContentText sx={{ color: 'red' }}>1 file required *</DialogContentText>
+            
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
