@@ -1,0 +1,46 @@
+import * as React from 'react';
+import { TextField } from '@mui/material';
+import { useField } from 'formik';
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+const theme = createTheme({
+
+    components: {
+        MuiFormLabel: {
+            styleOverrides: {
+                asterisk: { color: "red" },
+            },
+        },
+    },
+
+})
+export default function TextFields({ name,
+    ...otherProps },props) {
+        // const { classes } = props;
+    const [field, mata] = useField(name);
+    const configTextfield = {
+        ...field,
+        ...otherProps,
+        fullWidth: true,
+        variant: 'outlined',
+        type: otherProps.showPassword==='password'?'password':otherProps.showPassword==='file'?'file':otherProps.showPassword==='number'?'number':'text',
+    };
+   
+    mata["name"]=field.name
+    // console.log("mata",mata)
+    if (mata && mata.touched && mata.error && mata.name===name) {
+        configTextfield.error = true;
+        configTextfield.helperText = mata.error;
+    }
+    // console.log("validation",(mata.error && mata.value!='' && mata.touched===false && mata.name===name), "========",name)
+
+    return (
+        <ThemeProvider theme={theme}>
+        <TextField 
+         error= {(mata.error && mata.value!='' && mata.touched===false && mata.name===name)?true:false} helperText={(mata.error && mata.value!='' && mata.touched===false && mata.name===name)?mata.error:""} {...configTextfield} required InputLabelProps={configTextfield.name==="MD_Mobile_Number" || configTextfield.name ==="value" ?{ required: false }:""} />
+          </ThemeProvider>
+    );
+}
+
+
+
+
