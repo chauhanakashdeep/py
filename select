@@ -1,0 +1,271 @@
+import * as React from 'react';
+import { TextField } from '@mui/material';
+import { MenuItem } from '@mui/material';
+import { useField, useFormikContext } from 'formik';
+import { createTheme, makeStyles, ThemeProvider } from '@mui/material/styles'
+import { useDispatch, useSelector } from 'react-redux';
+import { stateListInfo } from '../../redux/actions/stateListActions';
+import { branchListInfo } from '../../redux/actions/branchListActions';
+import { mandalListInfo } from '../../redux/actions/mandalListActions';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import Box from '@mui/material/Box';
+import { bottom } from '@popperjs/core';
+
+const theme = createTheme({
+    components: {
+        MuiFormLabel: {
+            styleOverrides: {
+                asterisk: { color: "red" },
+            },
+        },
+        MuiPopover: {
+            styleOverrides:{
+                paper : {maxHeight:"200px"}
+        },
+        },
+        breakpoints: {
+            values: {
+                xs: 0,
+                sm: 600,
+                md: 900,
+                lg: 1200,
+                xl: 1536,
+            },
+        },
+    },
+})
+
+// const useStyles = makeStyles({
+//     select: {
+//         "& ul": {
+//             backgroundColor: "#cccccc",
+//             bottom: "50%",
+//         },
+//         "& li": {
+//             fontSize: 12,
+//             bottom: "50%"
+//         },
+//     },
+// });
+
+const SelectWrapper = ({
+    name,
+    options,
+    oncheck,
+    oncheckIfsc,
+    oncheckDistrict,
+    oncheckMandal,
+    oncheckArchitecture,
+    oncheckFire,
+    oncheckseparatePark,
+    oncheckBioMedical,
+    oncheckCanteen,
+    oncheckAmbulance,
+    oncheckBloodbank,
+    oncheckPharmacy,
+    oncheckradio,
+    onchecklab,
+    oncheckRamp,
+    oncheckLift,
+    oncheckGenerator,
+    oncheckSpeciality,
+
+    ...otherProps
+}) => {
+    const { setFieldValue } = useFormikContext();
+    const [field, meta] = useField(name);
+    const dispatch = useDispatch();
+    const data = useSelector((state) => state.formsReducer);
+    const districtList = useSelector((state) => state.stateListReducer);
+    const branchList = useSelector((state) => state.branchListReducer)
+    const mandalList = useSelector((state) => state.mandalListReducer)
+    const data1 = useSelector((state) => state.initInfraInfoReducer);
+    const data2 = useSelector((state) => state.specialityInfoReducer);
+    // const classes = useStyles();    
+
+    const handleChange = evt => {
+        const { value } = evt.target;
+        console.log("Event target : ",value);
+        setFieldValue(name, value);
+        console.log("SELECT >>>>>", evt.target)
+        if (evt.target.name === "state") {
+            const stCode = data.data.result.stateList.find((item) => item.valueName === evt.target.value);
+            console.log("StateCode : ", stCode.valueId);
+            const payload = { "stateId": stCode.valueId.toString() }
+            console.log("District Event : ",evt.target);
+            dispatch(stateListInfo(payload));
+            oncheck && oncheck(evt.target.value,stCode.valueId);
+        }
+        if (evt.target.name === "district") {
+            const districtCode = districtList.data.result.districtList.find((item) => item.valueName === evt.target.value);
+            console.log("District Code : ", districtCode.valueId);
+            console.log("District Event : ",evt.target);
+            const payload = { "districtId": districtCode.valueId.toString() }
+            dispatch(mandalListInfo(payload));
+            oncheckDistrict && oncheckDistrict(districtCode.valueId.toString())
+        }
+        if (evt.target.name === "MuncipalityName") {
+            const mandalCode = mandalList.data.result.mandalList.find((item) => item.valueName === evt.target.value);
+            console.log("Mandal Code : ", mandalCode.valueId);
+            console.log("Mandal Event : ",evt.target);
+            console.log("Mandal :", mandalCode.value)
+            oncheckMandal && oncheckMandal(mandalCode.valueId)
+        }
+        if (evt.target.name === "Bank_Name") {
+            const branchCode = data.data.result.bankList.find((item) => item.valueName === evt.target.value);
+            console.log("BranchCode : ", branchCode.valueId);
+            const payload = { "codeValueId": branchCode.valueId.toString() }
+            dispatch(branchListInfo(payload));
+        }
+        if(evt.target.name === "Branch_Name"){
+            const branchName = branchList.data.result.branchList.find((item) => item.branchName === evt.target.value);
+            oncheckIfsc  && oncheckIfsc(branchName.ifscCode,branchName.branchId);
+        }
+
+        if(evt.target.name === "Standard_architecture_design"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Standardized Archetectural Design`].find((item) => item.valueName === evt.target.value);
+           console.log(std.valueId);
+           oncheckArchitecture && oncheckArchitecture(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Fire_fighting_system"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Fire Fighting System`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+          oncheckFire && oncheckFire(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Separate_parking"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Separate Parking Area for Staff and Public Vehicles`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+          oncheckseparatePark && oncheckseparatePark(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Bio_medical_waste"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Bio Medical Waste Management`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+           oncheckBioMedical && oncheckBioMedical(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Ambulance"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Ambulance`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+           oncheckAmbulance && oncheckAmbulance(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Canteen"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Canteen / Pantry`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+           oncheckCanteen && oncheckCanteen(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Generator"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Generator / Power Backup`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+           oncheckGenerator && oncheckGenerator(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Lift_Provision"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Lift Provision`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+           oncheckLift && oncheckLift(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Ramp_provision"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Ramp Provision`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+           oncheckRamp && oncheckRamp(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Bloodbank"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Blood Bank`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+          oncheckBloodbank && oncheckBloodbank(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Advance_radio_diagnosis"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Advanced Radio Diagnostic Services`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+          oncheckradio && oncheckradio(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Advance_lab_diagnosis"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Advanced Lab Diagnostic Services`].find((item) => item.valueName === evt.target.value);
+          // console.log(std.valueId);
+          onchecklab && onchecklab(std.valueId,std.valueName);
+        }
+        if(evt.target.name === "Pharmacy"){
+            //alert("Standard architecture design");
+            const std = data1.data.result[`Pharmacy`].find((item) => item.valueName === evt.target.value);
+            
+          // console.log(std.valueId);
+          oncheckPharmacy && oncheckPharmacy(std.valueId,std.valueName);
+        }
+
+        if(evt.target.name === "speciality"){
+            
+           const std = data2.data.result[`specialities`].find((item) => item.disMainName === evt.target.value);   
+           console.log(std.disMainId + " " + std.disMainName);       
+           oncheckSpeciality && oncheckSpeciality(std.disMainId,std.disMainName);
+        }
+    };
+
+    const configSelect = {
+        ...field,
+        ...otherProps,
+        select: true,
+        variant: 'outlined',
+        fullWidth: true,
+        onChange: handleChange
+    };
+
+    if (meta && meta.touched && meta.error) {
+        configSelect.error = true;
+        configSelect.helperText = meta.error;
+    }
+
+    return (
+        <ThemeProvider theme={theme}>
+            <div className={"h-10"}>
+             <Box sx={{ minWidth: 225 }}>
+             <FormControl fullWidth>
+            <TextField required {...configSelect} sm={3} md={3}>
+                {Object.keys(options).map((item, pos) => {
+                    return (
+                        <MenuItem key={pos} value={options[item]} >
+                            {options[item]}
+                        </MenuItem>
+                    )
+                })}
+            </TextField>
+            </FormControl>
+            </Box>
+            </div>
+            {/* <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">{field}</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={"age"}
+                        label={options}
+                        onChange={handleChange}
+                    >
+                      {Object.keys(options).map((item, pos) => {
+                    return (
+                        <MenuItem key={pos} value={options[item]}>
+                            {options[item]}
+                        </MenuItem>
+                    )
+                })}
+                    </Select>
+                </FormControl>
+            </Box> */}
+        </ThemeProvider>
+
+    );
+};
+
+export default SelectWrapper;
