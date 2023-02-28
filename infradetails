@@ -1,0 +1,968 @@
+import React, { useEffect, useState } from "react";
+import { Formik, Form, useFormikContext } from 'formik';
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import * as Yup from 'yup';
+
+import TextFields from "./TextField/TextField";
+import { useDispatch, useSelector } from "react-redux";
+import FileUploadSharpIcon from '@mui/icons-material/FileUploadSharp';
+import VisibilitySharpIcon from '@mui/icons-material/VisibilitySharp';
+import { Alert, Box, ButtonBase, IconButton, Input, Tooltip } from "@mui/material";
+
+import axios from "axios";
+import ButtonWrap from "./FormsUI/Button/Button";
+import { sizeWidth } from "@mui/system";
+import AddIcon from '@mui/icons-material/Add';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SelectWrapper from "./SelectField/SelectField";
+import { hospitalInfraInfo } from "../redux/actions/hospitalInfraDetailsAction";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { initInfraInfo } from "../redux/actions/initiateInfraDetailsAction";
+
+
+
+
+
+export default function HospitalInfraDetails() {
+    const standard_architecture_design = [];
+    const fire_fighting_system = [];
+    const bio_medical_waste = [];
+    const general_wards = [];
+    const separate_parking = [];
+    const generator = [];
+    const plinth_area = [];
+    const lift_provision = [];
+    const ramp_provision = [];
+    const advance_lab_diagnosis = [];
+    const advance_radio_diagnosis = [];
+    const pharmacy = [];
+    const bloodbank = [];
+    const ambulance = [];
+    const canteen = [];
+    const dispatch = useDispatch();
+    const data = useSelector((state) => state.initInfraInfoReducer);
+    const hospitalInfraInfoSuccess = useSelector((state) => state.hospitalInfraInfoReducer)
+    //console.log("hospitalInfraInfoSuccess >>>>>>>>>>>>>>>>>>>>"+hospitalInfraInfoSuccess);
+   
+    React.useEffect(() => {
+        dispatch(initInfraInfo());
+    }, [dispatch]);
+
+
+    //seggregation of all dropdown values from json object
+
+    console.log(data.data.result);
+    if (Object.keys(data.data).length != 0) {
+        data.data.result.Ambulance.forEach(element => ambulance.push(element.valueName));
+        data.data.result.Pharmacy.forEach(element => pharmacy.push(element.valueName));
+        data.data.result[`Bio Medical Waste Management`].forEach(element => bio_medical_waste.push(element.valueName));
+        data.data.result[`Standardized Archetectural Design`].forEach(element => standard_architecture_design.push(element.valueName));
+        data.data.result[`Advanced Lab Diagnostic Services`].forEach(element => advance_lab_diagnosis.push(element.valueName));
+        data.data.result[`Advanced Radio Diagnostic Services`].forEach(element => advance_radio_diagnosis.push(element.valueName));
+        data.data.result[`Blood Bank`].forEach(element => bloodbank.push(element.valueName));
+        data.data.result[`Canteen / Pantry`].forEach(element => canteen.push(element.valueName));
+        data.data.result[`Separate Parking Area for Staff and Public Vehicles`].forEach(element => separate_parking.push(element.valueName));
+        data.data.result[`Generator / Power Backup`].forEach(element => generator.push(element.valueName));
+        data.data.result[`Lift Provision`].forEach(element => lift_provision.push(element.valueName));
+        data.data.result[`Ramp Provision`].forEach(element => ramp_provision.push(element.valueName));
+        data.data.result[`Fire Fighting System`].forEach(element => fire_fighting_system.push(element.valueName));
+
+
+
+
+    }
+    // data.data.result.advance_lab_diagnosis.forEach(element => advance_lab_diagnosis.push(element.advance_lab_diagnosis));
+    // data.data.result.advance_radio_diagnosis.forEach(element => advance_radio_diagnosis.push(element.advance_lab_diagnosis));
+    // data.data.result.bio_medical_waste.forEach(element=>bio_medical_waste.push(element.bio_medical_waste));
+
+
+    const Ambulance = ambulance;
+    const Advance_lab_diagnosis = advance_lab_diagnosis;
+    const Advance_radio_diagnosis = advance_radio_diagnosis;
+    const Bio_medical_waste = bio_medical_waste;
+    const Standard_architecture_design = standard_architecture_design;
+    const Fire_fighting_system = fire_fighting_system;
+    const Separate_parking = separate_parking;
+    const Generator = generator;
+    const Lift_provision = lift_provision;
+    const Ramp_provision = ramp_provision;
+    const Pharmacy = pharmacy;
+    const Bloodbank = bloodbank;
+    const Canteen = canteen;
+
+    const handlepost = (info) => {
+        console.log("API POST data after submit: ", info);
+        if (info) {       
+            dispatch(hospitalInfraInfo(info));
+           
+        }
+    }
+
+    const Initial_Infra_Details_formValidation = Yup.object().shape({
+        Standard_architecture_design: Yup.string().required('Required'),
+        Fire_fighting_system: Yup.string().required('Required'),
+        Bio_medical_waste: Yup.string().required('Required'),
+        General_wards: Yup.number().integer().required('Required'),
+        Separate_parking: Yup.string().required('Required'),
+        Generator: Yup.string().required('Required'),
+        Plinth_area: Yup.number().integer().required('Required'),
+        Lift_Provision: Yup.string().required('Required'),
+        Ramp_provision: Yup.string().required('Required'),
+        Advance_lab_diagnosis: Yup.string().required('Required'),
+        // Constituency_Name: Yup.date().required('Required'),
+        Advance_radio_diagnosis: Yup.string().required('Required'),
+        // Nearest_city_Name: Yup.string().required('Required'),
+        Pharmacy: Yup.string().required('Required'),
+        Bloodbank: Yup.string().required('Required'),
+        Ambulance: Yup.string().required('Required'),
+        Canteen: Yup.string().required('Required'),
+
+    });
+
+    const Initial_Infra_Details = {
+        Standard_architecture_design: '',
+        Fire_fighting_system: '',
+        Bio_medical_waste: '',
+        General_wards: '',
+        Separate_parking: '',
+        Generator: '',
+        Plinth_area: '',
+        Lift_Provision: '',
+        Ramp_provision: '',
+        Advance_lab_diagnosis: '',
+        Advance_radio_diagnosis: '',
+        Pharmacy: '',
+        Bloodbank: '',
+        Ambulance: '',
+        Canteen: ''
+    };
+
+    const [architecture, setarchitecture] = useState();
+    const [viewArchitectureDesign, setviewArchitectureDesign] = useState();
+
+    const [firefighting, setfirefighting] = useState();
+    const [viewfirefighting, setviewfirefighting] = useState();
+
+    const [handleMadeicalWaste, sethandleMadeicalWaste] = useState();
+    const [viewMedicalWaste, setviewMedicalWaste] = useState();
+
+    const [handleseparateParking, sethandleseparateParking] = useState();
+    const [viewParking, setviewParking] = useState();
+
+    const [handlegenerator, sethandlegenerator] = useState();
+    const [viewGenerator, setviewGenerator] = useState();
+
+    const [handlegeneralWard, sethandlegeneralWard] = useState();
+    const [viewgeneralWard, setviewgeneralWard] = useState();
+
+    const [handleliftPro, sethandleliftPro] = useState();
+    const [viewLiftPro, setviewLiftPro] = useState();
+
+    const [handlerampPro, sethandlerampPro] = useState();
+    const [viewRampPro, setviewRampPro] = useState();
+
+
+    
+    const handleArchitecture = ({ target }) => {
+        //alert("Please attach file");
+      //  console.log("8888888888888888888888888888888888888888888888888888888888")
+        setarchitecture(target.files[0]);
+        setviewArchitectureDesign(URL.createObjectURL(target.files[0]));
+        console.log("Architecure Design ::: ", target.files);
+    };
+
+    const onDownload_architecure = () => {
+        const link = document.createElement("a");
+        link.href = viewArchitectureDesign;
+        link.target = "_blank "
+        link.click();
+    };
+
+    const handle_fire = ({ target }) => {
+        setfirefighting(target.files[0]);
+        setviewfirefighting(URL.createObjectURL(target.files[0]));
+        console.log("Fire Fighting Design ::: ", target.files);
+
+    }
+    const onDownload_fire = () => {
+        const link = document.createElement("a");
+        link.href = viewfirefighting;
+        link.target = "_blank "
+        link.click();
+
+    }
+    const handleMedicalWaste = ({ target }) => {
+        sethandleMadeicalWaste(target.files[0]);
+        setviewMedicalWaste(URL.createObjectURL(target.files[0]));
+        console.log("Medical Waste Design ::: ", target.files);
+    }
+    const download_MedicalWaste = ({ target }) => {
+        const link = document.createElement("a");
+        link.href = viewMedicalWaste;
+        link.target = "_blank "
+        link.click();
+
+    }
+
+    const handleParking = ({ target }) => {
+        sethandleseparateParking(target.files[0]);
+        setviewParking(URL.createObjectURL(target.files[0]));
+        console.log("Separate Parking ::: ", target.files);
+    }
+
+    const ondownload_parking = ({ target }) => {
+        const link = document.createElement("a");
+        link.href = viewParking;
+        link.target = "_blank "
+        link.click();
+
+    }
+
+    const handleGenerator = ({ target }) => {
+        sethandlegenerator(target.files[0]);
+        setviewGenerator(URL.createObjectURL(target.files[0]));
+        console.log("Generator ::: ", target.files);
+    }
+    const ondownloadGenerator = ({ target }) => {
+        const link = document.createElement("a");
+        link.href = viewGenerator;
+        link.target = "_blank "
+        link.click();
+
+    }
+
+
+    const handleward = ({ target }) => {
+        sethandlegeneralWard(target.files[0]);
+        setviewgeneralWard(URL.createObjectURL(target.files[0]));
+        console.log("General Ward::: ", target.files);
+    }
+    const ondownload_generalWard = ({ target }) => {
+        const link = document.createElement("a");
+        link.href = viewgeneralWard;
+        link.target = "_blank "
+        link.click();
+
+    }
+
+
+    const handle_lift = ({ target }) => {
+        sethandleliftPro(target.files[0]);
+        setviewLiftPro(URL.createObjectURL(target.files[0]));
+        // console.log("General Lift::: ", target.files);
+    }
+
+    const ondownload_lift = ({ target }) => {
+        const link = document.createElement("a");
+        link.href = viewLiftPro;
+        link.target = "_blank "
+        link.click();
+
+    }
+
+
+
+    const handleramp = ({ target }) => {
+        sethandlerampPro(target.files[0]);
+        setviewRampPro(URL.createObjectURL(target.files[0]));
+        console.log("Ramp Provision::: ", target.files);
+    };
+
+    const onDownload_ramp = () => {
+        const link = document.createElement("a");
+        link.href = viewRampPro;
+        link.target = "_blank "
+        link.click();
+    };
+
+    {/*   Setting label value Id's  */ }
+
+    const [architectureId, setarchitectureId] = useState();
+    const [archName, setarchName] = useState();
+    const oncheckArchitecture = (archId, archName) => {
+        // console.log("Architecture Id  ------------------>>>>>>>"+archId);
+        setarchitectureId(archId);
+        setarchName(archName);
+
+    }
+    const [fireId, setfireId] = useState();
+    const [fireName, setfireName] = useState();
+    const onCheckFire = (archId, archName) => {
+        //console.log("Afire Id  ------------------>>>>>>>"+archId);
+        setfireId(archId);
+        setfireName(archName);
+
+    }
+    const [parkingId, setparkingId] = useState();
+    const [parkingName, setparkingName] = useState();
+    const oncheckseparatePark = (archId, archName) => {
+        //  console.log("aprking Id  ------------------>>>>>>>"+archId);
+        setparkingId(archId);
+        setparkingName(archName);
+
+    }
+    const [medicalId, setmedicalId] = useState();
+    const [bioMedicalName, setbioMedicalName] = useState();
+    const oncheckBioMedical = (archId, archName) => {
+        // console.log("medical Id  ------------------>>>>>>>"+archId);
+        setmedicalId(archId);
+        setbioMedicalName(archName);
+
+    }
+    const [ambulanceId, setambulance] = useState();
+    const [ambulanceName, setambulanceName] = useState();
+    const oncheckAmbulance = (archId, archName) => {
+        // console.log("ambulance Id  ------------------>>>>>>>"+archId);
+        setambulance(archId);
+        setambulanceName(archName);
+
+
+    }
+    const [canteenId, setcanteenId] = useState();
+    const [canteenName, setcanteenName] = useState();
+    const oncheckCanteen = (archId, archName) => {
+        // console.log("canteen Id  ------------------>>>>>>>"+archId);
+        setcanteenId(archId);
+        setcanteenName(archName);
+
+    }
+    const [generatorId, setgeneratorId] = useState();
+    const [generatorName, setgeneratorName] = useState();
+    const oncheckGenerator = (archId, archName) => {
+        // console.log("generator Id  ------------------>>>>>>>"+archId);
+        setgeneratorId(archId);
+        setgeneratorName(archName);
+
+    }
+    const [liftProvisionId, setliftProvisionId] = useState();
+    const [liftName, setliftName] = useState();
+    const oncheckLift = (archId, archName) => {
+        // console.log("lidtProvision Id  ------------------>>>>>>>"+archId);
+        setliftProvisionId(archId);
+        setliftName(archName);
+
+    }
+    const [rampProvisionId, setrampProvisionId] = useState();
+    const [rampName, setrampName] = useState();
+    const oncheckRamp = (archId, archName) => {
+        // console.log("Ramp provision Id  ------------------>>>>>>>"+archId);
+        setrampProvisionId(archId);
+        setrampName(archName);
+
+    }
+    const [pharmacyId, setpharmacyId] = useState();
+    const [pharmacyName, setpharmacyName] = useState();
+    const oncheckPharmacy = (archId, archName) => {
+        console.log("pharmacy Id  ------------------>>>>>>>" + archId);
+        console.log("pharmacy Id  ------------------>>>>>>>" + archName);
+        setpharmacyId(archId);
+        setpharmacyName(archName);
+
+    }
+    const [bloodBankId, setbloodBankId] = useState();
+    const [bloodBankName, setbloodBankName] = useState();
+    const oncheckBloodbank = (archId, archName) => {
+        // console.log("blood bank Id  ------------------>>>>>>>"+archId);
+        setbloodBankId(archId);
+        setbloodBankName(archName);
+
+    }
+    const [radioId, setradioId] = useState();
+    const [radioName, setradioName] = useState();
+    const oncheckradio = (archId, archName) => {
+        // console.log("radio Id  ------------------>>>>>>>"+archId);
+        setradioId(archId);
+        setradioName(archName);
+
+    }
+    const [labDiagnosisId, setlabDiagnosisId] = useState();
+    const [labDiagnosisName, setlabDiagnosisName] = useState();
+    const onchecklab = (archId, archName) => {
+        // console.log("lab Id  ------------------>>>>>>>"+archId);
+        setlabDiagnosisId(archId);
+        setlabDiagnosisName(archName);
+
+    }
+    //const regId= localStorage.getItem()
+
+
+    var InfraFileinfo = []
+    var InfraLocalInfo = [];
+    const formDataInfra = new FormData();
+    var fileobject = [];
+
+    return (
+        <>
+
+            <Grid item xs={12}>
+                <br />
+                <br />
+                <Container>
+
+                    <Formik
+                        initialValues={{
+                            ...Initial_Infra_Details
+                        }}
+                        validationSchema={Initial_Infra_Details_formValidation}
+                        onSubmit={values => {
+                           // console.log("Values", values);
+                            const regID = localStorage.hospregId;
+                            const regId = Number(regID);
+                            InfraFileinfo =
+                                [
+                                    {
+                                        "labelValue": archName,
+                                        "labelValueId": "1",
+                                        "hosRegId": regId,
+
+                                    },
+                                    {
+                                        "labelValue": fireName,
+                                        "labelValueId": "2",
+                                        "hosRegId": regId,
+
+                                    },
+                                    {
+                                        "labelValue": bioMedicalName,
+                                        "labelValueId": "3",
+                                        "hosRegId": regId,
+                                    },
+                                    {
+                                        "labelValue": values.General_wards.toString(),
+                                        "labelValueId": "4",
+                                        "hosRegId": regId,
+                                    },
+                                    {
+
+                                        "labelValue": parkingName,
+                                        "labelValueId": "5",
+                                        "hosRegId": regId,
+                                    },
+                                    {
+                                        "labelValue": generatorName,
+                                        "labelValueId": "6",
+                                        "hosRegId": regId,
+                                    },
+                                   
+                                    {
+                                        "labelValue": liftName,
+                                        "labelValueId": "8",
+                                        "hosRegId": regId,
+
+                                    },
+                                    {
+                                        "labelValue": rampName,
+                                        "labelValueId": "9",
+                                        "hosRegId": regId, 
+                                    }
+
+                                ]
+                            InfraLocalInfo = [
+                                {
+                                    "labelValue": values.Plinth_area.toString(),
+                                    "labelValueId": "7",
+                                    "hosRegId": regId,
+                                },
+                                {
+                                    "labelValue": labDiagnosisName,
+                                    "labelValueId": "10",
+                                    "hosRegId": regId,
+                                },
+                                {
+                                    "labelValue": radioName,
+                                    "labelValueId": "11",
+                                    "hosRegId": regId,
+                                },
+                                {
+                                    "labelValue": pharmacyName,
+                                    "labelValueId": "12",
+                                    "hosRegId": regId,
+                                },
+                                {
+                                    "labelValue": bloodBankName,
+                                    "labelValueId": "13",
+                                    "hosRegId": regId,
+                                },
+                                {
+                                    "labelValue": ambulanceName,
+                                    "labelValueId": "14",
+                                    "hosRegId": regId,
+                                },
+                                {
+                                    "labelValue": canteenName,
+                                    "labelValueId": "15",
+                                    "hosRegId": regId,
+                                },
+                               
+
+                            ]
+
+
+                         //   console.log("Value of Ambulance is : ::::::::::::::" + ambulance.name);
+                         console.log("InfraLocalInfo" +InfraLocalInfo);
+                            formDataInfra.append("hospitalInfraDetailsDTO", new Blob([JSON.stringify(InfraLocalInfo)], { type: 'application/json' }));
+                            
+
+                            console.log("InfraFileinfo" + InfraFileinfo);
+                            formDataInfra.append("docInfoDTOS", new Blob([JSON.stringify(InfraFileinfo)], { type: 'application/json' }));
+                            
+
+
+
+                            formDataInfra.append("files",architecture );
+                          //  console.log(architectureDesign);
+                            formDataInfra.append("files", firefighting);
+                            formDataInfra.append("files", handleMadeicalWaste);
+                            formDataInfra.append("files", handleseparateParking);
+                            formDataInfra.append("files", handlegenerator);
+                            formDataInfra.append("files", handlegeneralWard);
+                            formDataInfra.append("files", handleliftPro);
+                            formDataInfra.append("files", handlerampPro);
+
+                          
+                            handlepost(formDataInfra);
+
+                        }}
+                    >
+
+                        <Form>
+
+                            <Grid container spacing={2} >
+                                {/*  Standard_architecture_design */}
+                                 <Grid item md={3}>
+                                    <SelectWrapper
+                                        name="Standard_architecture_design"
+                                        label="Architecture Design"
+                                        options={Standard_architecture_design}
+                                        oncheckArchitecture={oncheckArchitecture}
+
+                                    />
+                                </Grid>
+                                <Grid item md={0.3} mt={1}>
+                                <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_archi"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handleArchitecture}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_archi">
+                                        <Tooltip title="Please upload respective Architecture Design">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+
+                                 <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Architecture design">
+                                        {architecture != null ? (
+
+                                            <ButtonBase onClick={onDownload_architecure}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+                                    </Tooltip>
+                                </Grid> 
+
+
+                                <Grid item md={3}>
+                                    {/*  Fire_fighting_system */}
+                                    <SelectWrapper
+                                        name="Fire_fighting_system"
+                                        label="Fire Fighting System"
+                                        options={Fire_fighting_system}
+                                        oncheckFire={onCheckFire}
+                                    />
+                                </Grid>
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_fire"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handle_fire}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_fire">
+                                        <Tooltip title="Please upload Fire_fighting_system">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+
+                                </Grid>
+
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Fire_fighting_system">
+
+
+
+                                        {firefighting != null ? (
+
+                                            <ButtonBase onClick={onDownload_fire}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+
+                                    </Tooltip>
+                                </Grid>
+
+                                {/*   */}
+                                <Grid item md={3}>
+                                    {/*  Bio_medical_waste */}
+                                    <SelectWrapper
+                                        name="Bio_medical_waste"
+                                        label="Bio Medical Waste"
+                                        options={Bio_medical_waste}
+                                        oncheckBioMedical={oncheckBioMedical}
+                                    />
+                                </Grid>
+
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_medicalWaste"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handleMedicalWaste}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_medicalWaste">
+                                        <Tooltip title="Please upload Bio_medical_waste">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Bio_medical_waste">
+                                        {handleMadeicalWaste != null ? (
+
+                                            <ButtonBase onClick={download_MedicalWaste}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+
+                                    </Tooltip>
+                                </Grid>
+
+
+
+                                <Grid item md={3}>
+                                    <SelectWrapper
+                                        name="Separate_parking"
+                                        label="Separate Parking"
+                                        options={Separate_parking}
+                                        oncheckseparatePark={oncheckseparatePark}
+                                    />
+                                </Grid>
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_parking"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handleParking}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_parking">
+                                        <Tooltip title="Please upload Separate_parking">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Separate_parking">
+                                        {handleseparateParking != null ? (
+
+                                            <ButtonBase onClick={ondownload_parking}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+
+
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item md={3}>
+                                    <SelectWrapper
+                                        name="Generator"
+                                        label="Generator"
+                                        options={Generator}
+                                        oncheckGenerator={oncheckGenerator}
+                                    />
+                                </Grid>
+
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_generator"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handleGenerator}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_generator">
+                                        <Tooltip title="Please upload Generator Status">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+                                {/* <FileUpload value={files} onChange={setFiles}/> */}
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Generator status">
+                                        {handlegenerator != null ? (
+
+                                            <ButtonBase onClick={ondownloadGenerator}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+
+
+                                    </Tooltip>
+                                </Grid>
+                                <Grid item md={3}>
+                                    <TextFields
+                                        name="General_wards"
+                                        label="General Wards (500-10000Sq.Ft)"
+
+                                    >
+                                    </TextFields>
+
+
+                                </Grid>
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_generalward"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handleward}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_generalward">
+                                        <Tooltip title="Please upload General_wards Status">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview General_wards status">
+                                        {handlegeneralWard != null ? (
+
+                                            <ButtonBase onClick={ondownload_generalWard}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+
+
+                                    </Tooltip>
+                                </Grid>
+
+                                <Grid item md={3}>
+                                    <SelectWrapper
+                                        name="Lift_Provision"
+                                        label="Lift Provision"
+                                        options={Lift_provision}
+                                        oncheckLift={oncheckLift}
+
+                                    />
+                                </Grid>
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_Lift_provision"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handle_lift}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_Lift_provision">
+                                        <Tooltip title="Please upload Lift Provision">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Lift Provision status">
+
+
+                                        {handleliftPro != null ? (
+
+                                            <ButtonBase onClick={ondownload_lift}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+                                    </Tooltip>
+                                </Grid>
+
+
+                                <Grid item md={3}>
+                                    <SelectWrapper
+                                        name="Ramp_provision"
+                                        label="Ramp Provision"
+                                        options={Ramp_provision}
+                                        oncheckRamp={oncheckRamp}
+
+                                    />
+                                </Grid>
+                                <Grid item md={0.3} mt={1}>
+                                    <input
+                                        accept="file/*"
+                                        id="icon-button-file_upload_Ramp_provision"
+                                        type="file"
+                                        style={{ display: 'none', }}
+                                        onChange={handleramp}
+                                    />
+                                    <label htmlFor="icon-button-file_upload_Ramp_provision">
+                                        <Tooltip title="Please upload Ramp_provision">
+                                            <IconButton color="primary" component="span">
+                                                <AddIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </label>
+                                </Grid>
+
+                                <Grid item md={0.4} mt={2}>
+                                    <Tooltip title="Preview Ramp_provision status">
+                                        {handlerampPro != null ? (
+
+                                            <ButtonBase onClick={onDownload_ramp}>
+                                                <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
+                                            </ButtonBase>
+                                        ) : (
+                                            <ButtonBase disabled>
+                                                <VisibilityOffIcon color="error" ></VisibilityOffIcon>
+                                            </ButtonBase>
+                                        )}
+
+                                    </Tooltip>
+                                </Grid>
+
+                                <Grid item md={3}>
+                                    <TextFields
+                                        name="Plinth_area"
+                                        label="Plinth Area"
+                                    // options={Plinth_area}
+                                    />
+                                </Grid>
+
+                                <Grid item md={3.5}>
+                                    <SelectWrapper
+                                        name="Advance_lab_diagnosis"
+                                        label="Advance Lab Diagnosis"
+                                        options={Advance_lab_diagnosis}
+                                        onchecklab={onchecklab}
+                                    />
+                                </Grid>
+
+                                <Grid item md={3.5}>
+                                    <SelectWrapper
+                                        name="Advance_radio_diagnosis"
+                                        label="Advance Radio Diagnosis"
+                                        options={Advance_radio_diagnosis}
+                                        oncheckradio={oncheckradio}
+                                    />
+                                </Grid>
+                                <Grid item md={3.5}>
+                                    <SelectWrapper
+                                        name="Pharmacy"
+                                        label="Pharmacy"
+                                        options={Pharmacy}
+                                        oncheckPharmacy={oncheckPharmacy}
+                                    />
+                                </Grid>
+                                <Grid item md={3.5}>
+                                    <SelectWrapper
+                                        name="Bloodbank"
+                                        label="Bloodbank"
+                                        options={Bloodbank}
+                                        oncheckBloodbank={oncheckBloodbank}
+                                    />
+                                </Grid>
+
+                                <Grid item md={3.5}>
+                                    <SelectWrapper
+                                        name="Ambulance"
+                                        label="Ambulance"
+                                        options={Ambulance}
+                                        oncheckAmbulance={oncheckAmbulance}
+
+                                    />
+                                </Grid>
+                                <Grid item md={3.5}>
+                                    <SelectWrapper
+                                        name="Canteen"
+                                        label="Canteen"
+                                        options={Canteen}
+                                        oncheckCanteen={oncheckCanteen}
+                                    />
+                                </Grid>
+
+
+
+                            </Grid>
+                            <br />
+
+                            <br />
+                            <Box
+                                m={1}
+                                //margin
+                                display="flex"
+                                justifyContent="flex-end"
+                                alignItems="flex-end"
+                            >
+                                <ButtonWrap style={{
+                                    backgroundColor: "#5cb85c"
+                                }} variant="contained" sx={{ height: 40 }}>
+                                    Save
+                                </ButtonWrap>
+                            </Box>
+                            <br />
+                        </Form>
+                    </Formik>
+
+                </Container>
+
+            </Grid>
+        </>
+    )
+}
