@@ -1,0 +1,67 @@
+  const handleAddAttachments = () => {
+   
+    rows.map((row) => {
+
+      if (row.id === selectedRow.id) {
+        if(imagesList.length === 0){
+          alert("Please Attach document")
+        }
+        else{
+        //console.log("Selected id is " + selectedRow.id);
+        row.attachements = imagesList;
+      
+        checkMandatory(selectedRow.id);
+        fileArr.push(imagesList);
+        
+        
+        if (selectedRow.id === 4 || selectedRow.id === 5 || selectedRow.id === 3) {
+          if (imagesList.length > 5) {
+            setmorethanFive(true);
+            alert("Maximum 5 documemts allowed");
+
+          }
+          else {
+            for (let i = 1; i <= imagesList.length; i++) {
+              payload.push({
+                "docId": selectedRow.id,
+                "trustId": props
+              })
+
+            }
+          }
+        }
+      
+        else {
+          payload = [{
+            "docId": selectedRow.id,
+            "trustId": props,
+          },
+
+          ];
+        }
+      
+        documentformdata.append(
+          "payloadDTOList",
+          new Blob([JSON.stringify(payload)], { type: "application/json" })
+        );
+        if (imagesList.length <= 5) {
+          imagesList.forEach((file) => {
+
+            documentformdata.append("files", file);
+          });
+          dispatch(upploadAISdocs(documentformdata));
+        }
+      }
+
+        
+        setisAttached(true);
+      }
+    });
+
+    setRows(rows);
+
+    setOpen(false);
+
+
+
+  }
