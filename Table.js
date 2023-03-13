@@ -28,6 +28,7 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import FileUploadSharpIcon from "@mui/icons-material/FileUploadSharp";
 import VisibilitySharpIcon from "@mui/icons-material/VisibilitySharp";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import InfoIcon from "@mui/icons-material/Info";
 import Modal from "@mui/material/Modal";
 import PropTypes from "prop-types";
@@ -63,16 +64,58 @@ export default function HospitalTable() {
   // const [value, setValue] = useState(dayjs("2014-08-18T21:11:54"));
 
   const INITIAL_INITIATE_FORM_STATE = {
-    dateOfAdmission: "",
-    dateOfDischarge: "",
+    dateOfAdmission1: "",
+    dateOfAdmission2: "",
+    dateOfAdmission3: "",
+    dateOfAdmission4: "",
+    dateOfAdmission5: "",
+    dateOfAdmission6: "",
+    dateOfAdmission7: "",
+    dateOfAdmission8: "",
+    dateOfAdmission9: "",
+    dateOfAdmission10: "",
+    dateOfAdmission11: "",
+    dateOfAdmission12: "",
+    dateOfAdmission13: "",
+    dateOfAdmission14: "",
+    dateOfAdmission15: "",
+    dateOfAdmission16: "",
+    dateOfAdmission17: "",
+    dateOfAdmission18: "",
+    dateOfAdmission19: "",
+
+    dateOfDischarge1: "",
+    dateOfDischarge2: "",
+    dateOfDischarge3: "",
+    dateOfDischarge4: "",
+    dateOfDischarge5: "",
+    dateOfDischarge6: "",
+    dateOfDischarge7: "",
+    dateOfDischarge8: "",
+    dateOfDischarge9: "",
+    dateOfDischarge10: "",
+    dateOfDischarge11: "",
+    dateOfDischarge12: "",
+    dateOfDischarge13: "",
+    dateOfDischarge14: "",
+    dateOfDischarge15: "",
+    dateOfDischarge16: "",
+    dateOfDischarge17: "",
+    dateOfDischarge18: "",
+    dateOfDischarge19: "",
 
   };
 
   const INITIATE_FORM_VALIDATION = Yup.object().shape({
-    dateOfAdmission: Yup.date().required("Required"),
-    dateOfDischarge: Yup.date().required("Required"),
+    dateOfAdmission1: Yup.date().required("Required"),
+    dateOfAdmission2: Yup.date().required("Required"),
+    dateOfDischarge1: Yup.date().required("Required"),
+    dateOfDischarge2: Yup.date().required("Required"),
 
   });
+
+
+
   const [rows, setRows] = useState([
     {
       id: 1,
@@ -81,22 +124,31 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 2,
       name: "Building Occupancy Certificate",
       issuing_authority: "Municipal/Panchayath Authority",
-      date_of_issue: new Date().toLocaleString() + "",
-      date_of_expiry: new Date().toLocaleString() + "",
+      date_of_issue: "",
+      date_of_expiry: "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 3,
       name: "Trade License Certificate",
       issuing_authority: "Municipal/Panchayath Authority",
-      date_of_issue: new Date().toLocaleString() + "",
-      date_of_expiry: new Date().toLocaleString() + "",
+      date_of_issue: "",
+      date_of_expiry: "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 4,
@@ -105,6 +157,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 5,
@@ -113,6 +168,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 6,
@@ -121,6 +179,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 7,
@@ -129,6 +190,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 8,
@@ -137,6 +201,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 9,
@@ -145,6 +212,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 10,
@@ -153,6 +223,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 11,
@@ -161,6 +234,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 12,
@@ -169,6 +245,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 13,
@@ -177,6 +256,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 14,
@@ -185,6 +267,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: "",
@@ -193,6 +278,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: "",
@@ -201,6 +289,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 9,
@@ -209,6 +300,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: 9,
@@ -217,6 +311,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
     {
       id: "",
@@ -225,6 +322,9 @@ export default function HospitalTable() {
       date_of_issue: new Date().toLocaleString() + "",
       date_of_expiry: new Date().toLocaleString() + "",
       attachements: [],
+      dateOfadd: "",
+      dateOfEx: "",
+      isattached : false,
     },
   ]);
   let files = {};
@@ -263,14 +363,24 @@ export default function HospitalTable() {
   const handleAddAttachments = () => {
 
     rows.map((row) => {
+
       if (row.id === selectedRow.id) {
+        var da = new Date(row.dateOfadd)
+        var nextDayAdd = new Date(da)
+        nextDayAdd.setDate(da.getDate()+1)
+        var dx = new Date(row.dateOfEx);
+        var nextDayEx = new Date(dx)
+        nextDayEx.setDate(dx.getDate()+1)
+
+
+
         row.attachements = imagesList;
         fileArr.push(imagesList);
         payload = {
           nameOfDocuments: row.name,
           hospRegId: "51",
-          dateOfIssue: "2022-01-02",
-          dateOfExpiry: "2202-02-02",
+          dateOfIssue: nextDayAdd,
+          dateOfExpiry: nextDayEx,
         };
         mandatoryformdata.append(
           "hospitalMandatoryDocumentsDto",
@@ -280,6 +390,7 @@ export default function HospitalTable() {
           mandatoryformdata.append("files", file);
         });
         dispatch(mandatoryaction(mandatoryformdata));
+        row.isattached = true;
       }
     });
 
@@ -295,23 +406,12 @@ export default function HospitalTable() {
         Array.from(e.target.files).map((file) => {
           if (file.type === "application/pdf") {
             images.push(file);
-            // images.push({
-            //   id: file.lastModified,
-            //   name: file.name,
-            //   type: file.type,
-            // });
+
 
           } else {
             let img = URL.createObjectURL(file);
             images.push(file);
-            // console.log("Files", file);
-            //images.push(file);
-            // images.push({
-            //   id: file.lastModified,
-            //   imgSrc: img,
-            //   name: file.name,
-            //   type: file.type,
-            // });
+
           }
         })
       );
@@ -345,20 +445,8 @@ export default function HospitalTable() {
           ...INITIAL_INITIATE_FORM_STATE,
         }}
         validationSchema={INITIATE_FORM_VALIDATION}
-        onSubmit={(values) => {
 
-          let info = values;
-          let dfa = Date(info.dateOfAdmission);
-          console.log("Date of joining"+dfa);
-          info.dateOfAdmission = moment(dfa).format('YYYY-MM-DD');
-          let dfd = Date(info.dateOfDischarge);
-          console.log("Date of Expiring"+dfd);
-          info.dateOfDischarge = moment(dfd).format('YYYY-MM-DD');
-
-
-
-        }}
-        >
+      >
         {({
           errors,
           touched,
@@ -393,24 +481,31 @@ export default function HospitalTable() {
 
                     <TableCell>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+
                         <DesktopDatePicker
-                          inputFormat="MM/DD/YYYY"
-                          value={values.dateOfAdmission}
-                          onChange={(value) =>
-                            setFieldValue("dateOfAdmission", value, true)
+                          inputFormat="YYYY/MM/DD"
+                          value={ row.dateOfadd}
+                          onChange={(value) => {
+                            setFieldValue(value,true)
+                           
+                            row.dateOfadd =  value;
+                            console.log("dateOfAdmission" + row.id + " " + value)
+                            // setdateofissue1(value);
                           }
-                          name="dateOfAdmission"
+                          }
+                          name={"dateOfAdmission" + row.id}
                           maxDate={new Date()}
                           label="Date of Issue"
                           renderInput={(params) => (
                             <TextFields
                               error={Boolean(
-                                touched.dateOfAdmission &&
-                                errors.dateOfAdmission
+                                touched["dateOfAdmission" + row.id] &&
+                                errors["dateOfAdmission" + row.id]
                               )}
                               helperText={
-                                touched.dateOfAdmission &&
-                                errors.dateOfAdmission
+                                touched["dateOfAdmission" + row.id] &&
+                                errors["dateOfAdmission" + row.id]
                               }
                               variant="outlined"
                               required
@@ -421,35 +516,39 @@ export default function HospitalTable() {
                       </LocalizationProvider>
                     </TableCell>
 
+
+
                     <TableCell>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DesktopDatePicker
-                            inputFormat="MM/DD/YYYY"
-                            value={values.dateOfDischarge}
-                            onChange={(value) =>
-                              setFieldValue("dateOfDischarge", value, true)
-                            }
-                            name="dateOfDischarge"
-                            minDate={new Date()}
-                            label="Date of Expiry"
-                            renderInput={(params) => (
-                              <TextFields
-                                error={Boolean(
-                                  touched.dateOfDischarge &&
-                                  errors.dateOfDischarge
-                                )}
-                                helperText={
-                                  touched.dateOfDischarge &&
-                                  errors.dateOfDischarge
-                                }
-                                variant="outlined"
-                                required
-                                {...params}
-                              />
-                            )}
-                          />
-                        </LocalizationProvider>
+
+                        <DesktopDatePicker
+                          inputFormat="YYYY/MM/DD"
+                          value={row.dateOfEx}
+                          onChange={(value) => {
+                            setFieldValue( value, true)
+                            row.dateOfEx = value;
+                          }
+                          }
+                          name={"dateOfDischarge" + row.id}
+                          minDate={new Date()}
+                          label="Date of Expiry"
+                          renderInput={(params) => (
+                            <TextFields
+                              error={Boolean(
+                                touched["dateOfDischarge" + row.id] &&
+                                errors["dateOfDischarge" + row.id]
+                              )}
+                              helperText={
+                                touched["dateOfDischarge" + row.id] &&
+                                errors["dateOfDischarge" + row.id]
+                              }
+                              variant="outlined"
+                              required
+                              {...params}
+                            />
+                          )}
+                        />
+
                       </LocalizationProvider>
                     </TableCell>
                     <TableCell>
@@ -470,11 +569,19 @@ export default function HospitalTable() {
                           </IconButton>
                         </Tooltip>
                       </label>
+                      {row.isattached ? 
                       <Tooltip title="To preview Passbook">
                         <ButtonBase onClick={() => handleClickOpen(row, false)}>
                           <VisibilitySharpIcon color="primary"></VisibilitySharpIcon>
                         </ButtonBase>
                       </Tooltip>
+                      :
+                      <Tooltip title="To preview Passbook">
+                      <ButtonBase disabled>
+                        <VisibilityOffIcon color="error"></VisibilityOffIcon>
+                      </ButtonBase>
+                    </Tooltip>
+                      }                     
                     </TableCell>
                     <TableCell>
                       <Tooltip title="To preview sample document">
